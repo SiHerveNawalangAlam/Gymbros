@@ -1,0 +1,377 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: #1a1f3b;
+  --accent: #ff5e00;
+  --light: #f8f8f8;
+  --dark: #121212;
+  --text: #333;
+  --gray: #7a7a7a;
+  --success: #28a745;
+  --error: #dc3545;
+  --warning: #ffc107;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+  background-image: url("../images/backgrbackground.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--light);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(26, 31, 59, 0.8),
+    rgba(18, 18, 18, 0.9)
+  );
+  z-index: -1;
+}
+
+/* Header Styles */
+header {
+  background-color: rgba(26, 31, 59, 0.95);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo h1 {
+  font-family: "Oswald", sans-serif;
+  font-weight: 800;
+  font-size: 2.5rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.logo span {
+  color: var(--light);
+}
+
+.navBar ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+.navBar a {
+  color: var(--light);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.navBar a:hover {
+  color: var(--accent);
+  background: rgba(255, 94, 0, 0.1);
+}
+
+.navBar a.active {
+  color: var(--accent);
+  background: rgba(255, 94, 0, 0.15);
+}
+
+.navBar a i {
+  margin-right: 0.5rem;
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 6rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.hero h2 {
+  font-family: "Oswald", sans-serif;
+  font-size: 3.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  letter-spacing: 2px;
+  line-height: 1.2;
+  color: var(--light);
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+.hero h2 span {
+  color: var(--accent);
+}
+
+.hero p {
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: 0 auto 2.5rem;
+  color: #e0e0e0;
+}
+
+.cta-button {
+  display: inline-block;
+  background-color: var(--accent);
+  color: white;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  border: 2px solid var(--accent);
+  letter-spacing: 1px;
+}
+
+.cta-button:hover {
+  background-color: transparent;
+  color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(255, 94, 0, 0.2);
+}
+
+/* Features Section */
+.features {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 4rem 2rem;
+  flex-wrap: wrap;
+  background: rgba(26, 31, 59, 0.8);
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
+  width: 300px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+}
+
+.feature-card i {
+  font-size: 3rem;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+
+.feature-card h3 {
+  font-family: "Oswald", sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--light);
+}
+
+.feature-card p {
+  color: #ccc;
+}
+
+/* Dashboard Styles */
+.dashboard {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.welcome-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.welcome-card h2 {
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.dashboard-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  text-align: center;
+}
+
+.dashboard-card i {
+  font-size: 2.5rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.dashboard-card h3 {
+  margin-bottom: 1rem;
+  color: var(--light);
+}
+
+.dashboard-card p {
+  margin-bottom: 0.5rem;
+  color: #ccc;
+}
+
+/* Footer */
+footer {
+  background-color: var(--primary);
+  padding: 2rem;
+  text-align: center;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.social-icons {
+  display: flex;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.social-icons a {
+  color: var(--light);
+  font-size: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: var(--accent);
+}
+
+.copyright {
+  color: var(--gray);
+  font-size: 0.9rem;
+}
+
+/* Messages */
+.error-message {
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid var(--error);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.error-message p {
+  color: #f8d7da;
+  margin-bottom: 0.5rem;
+}
+
+.success-message {
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid var(--success);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.success-message p {
+  color: #d4edda;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .logo h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .navBar ul {
+    gap: 1rem;
+  }
+
+  .navBar a {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .hero {
+    padding: 3rem 1rem;
+  }
+
+  .hero h2 {
+    font-size: 2.5rem;
+  }
+
+  .features {
+    padding: 2rem 1rem;
+  }
+
+  .dashboard {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navBar ul {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hero h2 {
+    font-size: 2rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
