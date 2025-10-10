@@ -121,7 +121,8 @@ $csrf_token = Security::generateCSRFToken();
             <div class="success-message">
                 <p><i class="fas fa-check-circle"></i>
                     <?php echo $_SESSION['success_message'];
-                    unset($_SESSION['success_message']); ?></p>
+                    unset($_SESSION['success_message']); ?>
+                </p>
             </div>
         <?php endif; ?>
 
