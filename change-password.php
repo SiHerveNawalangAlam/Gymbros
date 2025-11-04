@@ -69,6 +69,20 @@ $csrf_token = Security::generateCSRFToken();
 </head>
 
 <body>
+  <!-- Loading Animation 
+  <div class="page-loader">
+    <div class="loader">
+      <div class="dumbbell">
+        <div class="bar"></div>
+        <div class="weight left"></div>
+        <div class="weight right"></div>
+      </div>
+  <p>Loading GymBros...</p>-->
+  </div>
+  </div>
+  <div class="heading">
+    <h1>Gym System</h1>
+  </div>
   <header>
     <div class="logo">
       <h1>Gym<span>Bros</span></h1>
@@ -140,6 +154,7 @@ $csrf_token = Security::generateCSRFToken();
   </div>
 
   <script src="js/validation.js"></script>
+  <!--<script src="js/loader.js"></script>-->
 </body>
 
 </html>

@@ -18,11 +18,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Security::verifyCSRFToken($_POST['c
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Check if user is locked out
-    if (Security::checkLockout($username)) {
-        $lockoutTime = Security::getLockoutTime($username);
+    // Add input validation
+    if (strlen($username) < 3 || strlen($username) > 20 || !preg_match('/^[a-zA-Z0-9]+$/', $username)) {
+        $errors[] = "Username must be 3-20 characters (letters and numbers only)";
+    }
+
+    if (strlen($password) < 8 || strlen($password) > 128) {
+        $errors[] = "Password must be 8-128 characters long";
+    }
+
+    // Check if user is locked out (regardless of validation errors).
+    // Use getLockoutTime once to retrieve the remaining seconds.
+    $lockoutTime = Security::getLockoutTime($username);
+    if ($lockoutTime > 0) {
         $errors[] = "Too many failed attempts. Please try again in {$lockoutTime} seconds.";
-    } else {
+    }
+    // Only proceed if no validation errors and not locked out
+    elseif (empty($errors)) {
         $db = new Database();
         $conn = $db->getConnection();
 
@@ -52,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Security::verifyCSRFToken($_POST['c
             $stmt->bind_param("ss", $username, $ip_address);
             $stmt->execute();
 
-            // Check if we should show forgot password
+            // Check total failed attempts for forgot password display
             $stmt = $conn->prepare("SELECT COUNT(*) as attempts FROM login_attempts 
                                    WHERE username = ? AND attempt_time > DATE_SUB(NOW(), INTERVAL 30 MINUTE) 
                                    AND success = 0");
@@ -64,9 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Security::verifyCSRFToken($_POST['c
             $loginAttempts = $row['attempts'];
             $showForgotPassword = ($loginAttempts >= 2);
 
-            if ($loginAttempts >= 3) {
-                $lockoutTime = Security::getLockoutTime($username);
-            }
+            // Get current lockout time after this failed attempt
+            $lockoutTime = Security::getLockoutTime($username);
         }
     }
 }
@@ -88,6 +99,9 @@ $csrf_token = Security::generateCSRFToken();
 </head>
 
 <body>
+    <div class="heading">
+        <h1>Gym System</h1>
+    </div>
     <header>
         <div class="logo">
             <h1>Gym<span>Bros</span></h1>
@@ -95,8 +109,8 @@ $csrf_token = Security::generateCSRFToken();
         <div class="navBar">
             <ul>
                 <li><a href="index.php"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="login.php" class="active"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                 <li><a href="register.php"><i class="fas fa-user-plus"></i> Register</a></li>
+                <li><a href="login.php" class="active"><i class="fas fa-sign-in-alt"></i> Login</a></li>
             </ul>
         </div>
     </header>

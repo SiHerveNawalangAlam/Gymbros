@@ -17,6 +17,11 @@ class Validation {
         input.value = value.replace(/\s{2,}/g, ' ');
         
         if (value === '') return { isValid: false, errors: [`${fieldName} is required`] };
+
+        // Check for mixed numbers and letters
+        if (/\d[a-zA-Z]|[a-zA-Z]\d/.test(value)) {
+        errors.push('Numbers and letters cannot be mixed together');
+    }
         
         // Check three consecutive identical letters
         if (/([a-zA-Z])\1\1/.test(value)) {

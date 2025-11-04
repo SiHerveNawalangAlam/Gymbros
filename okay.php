@@ -253,9 +253,6 @@ $csrf_token = Security::generateCSRFToken();
 
     <!-- Progress Steps -->
     <div class="progress-steps">
-      <div class="progress-line">
-        <div class="progress-fill"></div>
-      </div>
       <div class="step active" data-step="1">
         <div class="step-number">1</div>
         <div class="step-label">Personal Info</div>
@@ -668,7 +665,8 @@ $csrf_token = Security::generateCSRFToken();
 
   <script src="js/validation.js"></script>
   <script src="js/auth.js"></script>
-  <script src="js/multi_step.js"></script>
+  <script src="js/multi-step-form.js"></script>
+  <script src="multi_step.js"></script>
 </body>
 
 </html>

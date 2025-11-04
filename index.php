@@ -13,7 +13,7 @@ $isLoggedIn = Auth::isLoggedIn();
   <title>GymBros - Fitness & Bodybuilding</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Oswald:wght@500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -30,7 +30,9 @@ $isLoggedIn = Auth::isLoggedIn();
       <p>Loading GymBros...</p>
     </div>
   </div>
-
+  <div class="heading">
+    <h1>Gym System</h1>
+  </div>
   <header>
     <div class="logo">
       <h1>Gym<span>Bros</span></h1>
@@ -51,8 +53,8 @@ $isLoggedIn = Auth::isLoggedIn();
           <li><a href="change-password.php"><i class="fas fa-key"></i> Change Password</a></li>
           <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         <?php else: ?>
-          <li><a href="login.php"><i class="fas fa-sign-in-alt"></i> Login</a></li>
           <li><a href="register.php"><i class="fas fa-user-plus"></i> Register</a></li>
+          <li><a href="login.php"><i class="fas fa-sign-in-alt"></i> Login</a></li>
         <?php endif; ?>
       </ul>
     </div>
@@ -319,64 +321,7 @@ $isLoggedIn = Auth::isLoggedIn();
     </div>
   </footer>
 
-  <script>
-    // Loading animation
-    window.addEventListener('load', function () {
-      const pageLoader = document.querySelector('.page-loader');
-      setTimeout(() => {
-        pageLoader.style.opacity = '0';
-        setTimeout(() => {
-          pageLoader.style.display = 'none';
-        }, 500);
-      }, 1000);
-    });
-
-    // Animate stats counter
-    function animateStats() {
-      const stats = document.querySelectorAll('.stat-number');
-      stats.forEach(stat => {
-        const target = parseInt(stat.getAttribute('data-count'));
-        const duration = 2000; // 2 seconds
-        const step = target / (duration / 16); // 60fps
-        let current = 0;
-
-        const timer = setInterval(() => {
-          current += step;
-          if (current >= target) {
-            current = target;
-            clearInterval(timer);
-          }
-          stat.textContent = Math.floor(current);
-        }, 16);
-      });
-    }
-
-    // Intersection Observer for stats animation
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          animateStats();
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.5 });
-
-    // Observe hero stats section
-    const heroStats = document.querySelector('.hero-stats');
-    if (heroStats) {
-      observer.observe(heroStats);
-    }
-
-    // Mobile menu toggle
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const navBar = document.querySelector('.navBar');
-
-    if (mobileMenuBtn) {
-      mobileMenuBtn.addEventListener('click', () => {
-        mobileMenuBtn.classList.toggle('active');
-        navBar.classList.toggle('active');
-      });
-    }
+  <script src="js/loader.js">
   </script>
 </body>
 

@@ -122,6 +122,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
+  <div class="heading">
+    <h1>Gym System</h1>
+  </div>
   <header>
     <div class="logo">
       <h1>Gym<span>Bros</span></h1>

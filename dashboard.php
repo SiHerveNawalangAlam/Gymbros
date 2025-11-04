@@ -63,7 +63,9 @@ $achievements = [
       <p>Loading Dashboard...</p>
     </div>
   </div>
-
+  <div class="heading">
+    <h1>Gym System</h1>
+  </div>
   <header>
     <div class="logo">
       <h1>Gym<span>Bros</span></h1>
@@ -394,58 +396,7 @@ $achievements = [
     </div>
   </footer>
 
-  <script>
-    // Loading animation
-    window.addEventListener('load', function () {
-      const pageLoader = document.querySelector('.page-loader');
-      setTimeout(() => {
-        pageLoader.style.opacity = '0';
-        setTimeout(() => {
-          pageLoader.style.display = 'none';
-        }, 500);
-      }, 800);
-    });
-
-    // Mobile menu toggle
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const navBar = document.querySelector('.navBar');
-
-    if (mobileMenuBtn) {
-      mobileMenuBtn.addEventListener('click', () => {
-        mobileMenuBtn.classList.toggle('active');
-        navBar.classList.toggle('active');
-      });
-    }
-
-    // Animate stat cards on scroll
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, observerOptions);
-
-    // Observe stat cards
-    document.querySelectorAll('.stat-card').forEach(card => {
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(20px)';
-      card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-      observer.observe(card);
-    });
-
-    // Prevent back button after login
-    history.pushState(null, null, location.href);
-    window.onpopstate = function () {
-      history.go(1);
-    };
-  </script>
+  <script src="js/loader.js"></script>
 </body>
 
 </html>

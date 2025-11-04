@@ -13,13 +13,22 @@ class AuthHelper {
         }
     }
 
+    static validateUsername(username) {
+        const usernameRegex = /^[a-zA-Z0-9]{3,20}$/;
+        return usernameRegex.test(username);
+    }
+
+    static validatePassword(password) {
+        return password.length >= 8 && password.length <= 128;
+    }
+
     static checkUsername(username) {
         if (username.length < 3) return;
         
         const feedbackDiv = document.getElementById('username-feedback');
         if (!feedbackDiv) return;
         
-        // Simulate AJAX check (you'll need to implement actual AJAX call)
+        // Simulate AJAX check
         fetch('check_username.php', {
             method: 'POST',
             headers: {
@@ -64,12 +73,177 @@ class AuthHelper {
     }
 
     static preventBackButton() {
-        // Prevent back button after login
+        // Prevent back button after login (for dashboard)
         if (window.history && window.history.pushState) {
             window.history.pushState(null, null, window.location.href);
             window.onpopstate = function() {
                 window.history.go(1);
             };
+        }
+    }
+
+    static preventLoginBackButton() {
+        // AGGRESSIVE back button prevention for LOGIN PAGE
+        console.log('Aggressive login page back button prevention activated');
+        
+        if (window.history && window.history.pushState) {
+            // Method 1: Push multiple states to create a barrier
+            for (let i = 0; i < 5; i++) {
+                window.history.pushState(null, null, window.location.href);
+            }
+            
+            // Method 2: Continuous history management
+            let historyInterval = setInterval(() => {
+                window.history.pushState(null, null, window.location.href);
+            }, 100);
+            
+            // Method 3: Aggressive popstate handler
+            window.addEventListener('popstate', function(event) {
+                // Push multiple states to create a barrier
+                for (let i = 0; i < 3; i++) {
+                    window.history.pushState(null, null, window.location.href);
+                }
+                
+                // Force forward navigation
+                window.history.forward();
+                
+                // Show persistent warning
+                AuthHelper.showAggressiveBackButtonWarning();
+                
+                // Log the attempt
+                console.log('Back button blocked on login page');
+            });
+
+            // Store the interval so we can clear it if needed
+            window.loginBackButtonInterval = historyInterval;
+            
+            // Additional protection - replace current entry
+            window.history.replaceState(null, null, window.location.href);
+        }
+    }
+
+    static showAggressiveBackButtonWarning() {
+        // Remove existing warning if any
+        const existingWarning = document.getElementById('back-button-warning');
+        if (existingWarning) {
+            existingWarning.remove();
+        }
+
+        // Create more persistent warning notification
+        const warning = document.createElement('div');
+        warning.id = 'back-button-warning';
+        warning.innerHTML = `
+            <div class="back-button-warning-content">
+                <i class="fas fa-ban"></i>
+                <div>
+                    <strong>Back Navigation Blocked</strong>
+                    <div>Back button is disabled on login page. Use the navigation menu above.</div>
+                </div>
+                <button onclick="this.closest('#back-button-warning').remove()" class="close-warning">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        
+        // Add styles if not already added
+        if (!document.getElementById('back-button-warning-styles')) {
+            const styles = document.createElement('style');
+            styles.id = 'back-button-warning-styles';
+            styles.textContent = `
+                #back-button-warning {
+                    position: fixed;
+                    top: 80px;
+                    right: 20px;
+                    z-index: 10000;
+                    animation: slideInWarning 0.3s ease;
+                }
+                
+                .back-button-warning-content {
+                    background: #dc3545;
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    font-family: 'Montserrat', sans-serif;
+                    font-size: 14px;
+                    max-width: 350px;
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 12px;
+                    border-left: 4px solid #ff5e00;
+                }
+                
+                .back-button-warning-content i.fa-ban {
+                    font-size: 18px;
+                    margin-top: 2px;
+                    color: #ffc107;
+                }
+                
+                .back-button-warning-content strong {
+                    display: block;
+                    margin-bottom: 4px;
+                    font-size: 15px;
+                }
+                
+                .close-warning {
+                    background: none;
+                    border: none;
+                    color: white;
+                    cursor: pointer;
+                    padding: 4px;
+                    margin-left: auto;
+                    align-self: flex-start;
+                }
+                
+                .close-warning:hover {
+                    color: #ffc107;
+                }
+                
+                @keyframes slideInWarning {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                
+                @keyframes slideOutWarning {
+                    from {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                    to {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+        
+        document.body.appendChild(warning);
+        
+        // Auto-remove after 6 seconds (longer for aggressive warning)
+        setTimeout(() => {
+            if (warning.parentNode) {
+                warning.style.animation = 'slideOutWarning 0.3s ease';
+                setTimeout(() => {
+                    if (warning.parentNode) {
+                        warning.parentNode.removeChild(warning);
+                    }
+                }, 300);
+            }
+        }, 6000);
+    }
+
+    // Method to clear the prevention (if needed for logout)
+    static clearBackButtonPrevention() {
+        if (window.loginBackButtonInterval) {
+            clearInterval(window.loginBackButtonInterval);
+            window.loginBackButtonInterval = null;
         }
     }
 
@@ -117,10 +291,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // Security questions initialization
     AuthHelper.initSecurityQuestions();
 
-    // Form submission enhancements
+    // AGGRESSIVE BACK BUTTON PREVENTION - FOR LOGIN PAGE
+    if (window.location.pathname.includes('login.php') || 
+        document.querySelector('form[id="login-form"]')) {
+        AuthHelper.preventLoginBackButton();
+        
+        // REMOVED the beforeunload event that was causing the alert on form submission
+    }
+
+    // Back button prevention for dashboard (existing)
+    if (window.location.pathname.includes('dashboard.php')) {
+        AuthHelper.preventBackButton();
+    }
+
+    // Form submission enhancements with validation
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
         form.addEventListener('submit', function(e) {
+            // Client-side validation for login form
+            if (this.id === 'login-form') {
+                const username = this.querySelector('input[name="username"]');
+                const password = this.querySelector('input[name="password"]');
+                
+                if (username && !AuthHelper.validateUsername(username.value)) {
+                    e.preventDefault();
+                    alert('Username must be 3-20 characters (letters and numbers only)');
+                    username.focus();
+                    return;
+                }
+                
+                if (password && !AuthHelper.validatePassword(password.value)) {
+                    e.preventDefault();
+                    alert('Password must be 8-128 characters long');
+                    password.focus();
+                    return;
+                }
+            }
+            
             // Additional client-side validation before submission
             if (!this.checkValidity()) {
                 e.preventDefault();
