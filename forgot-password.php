@@ -183,22 +183,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-group">
           <label class="form-label"><?php echo htmlspecialchars($_SESSION['reset_user']['question1']); ?></label>
           <div class="answers-row">
-            <input type="text" name="answer1" class="form-input" placeholder="Your answer" required>
-            <input type="text" name="answer1_repeat" class="form-input" placeholder="Re-enter answer" required>
+            <div class="input-with-icon" style="flex:1;">
+              <i class="fas fa-key input-icon"></i>
+              <input type="password" name="answer1" id="answer1" class="form-input" placeholder="Your answer" required>
+              <span class="password-toggle" onclick="togglePassword('answer1')">
+                <i class="fas fa-eye" id="answer1-icon"></i>
+              </span>
+            </div>
+            <div class="input-with-icon" style="flex:1;">
+              <i class="fas fa-key input-icon"></i>
+              <input type="password" name="answer1_repeat" id="answer1_repeat" class="form-input" placeholder="Re-enter answer" required>
+              <span class="password-toggle" onclick="togglePassword('answer1_repeat')">
+                <i class="fas fa-eye" id="answer1_repeat-icon"></i>
+              </span>
+            </div>
           </div>
         </div>
         <div class="form-group">
           <label class="form-label"><?php echo htmlspecialchars($_SESSION['reset_user']['question2']); ?></label>
           <div class="answers-row">
-            <input type="text" name="answer2" class="form-input" placeholder="Your answer" required>
-            <input type="text" name="answer2_repeat" class="form-input" placeholder="Re-enter answer" required>
+            <div class="input-with-icon" style="flex:1;">
+              <i class="fas fa-key input-icon"></i>
+              <input type="password" name="answer2" id="answer2" class="form-input" placeholder="Your answer" required>
+              <span class="password-toggle" onclick="togglePassword('answer2')">
+                <i class="fas fa-eye" id="answer2-icon"></i>
+              </span>
+            </div>
+            <div class="input-with-icon" style="flex:1;">
+              <i class="fas fa-key input-icon"></i>
+              <input type="password" name="answer2_repeat" id="answer2_repeat" class="form-input" placeholder="Re-enter answer" required>
+              <span class="password-toggle" onclick="togglePassword('answer2_repeat')">
+                <i class="fas fa-eye" id="answer2_repeat-icon"></i>
+              </span>
+            </div>
           </div>
         </div>
         <div class="form-group">
           <label class="form-label"><?php echo htmlspecialchars($_SESSION['reset_user']['question3']); ?></label>
           <div class="answers-row">
-            <input type="text" name="answer3" class="form-input" placeholder="Your answer" required>
-            <input type="text" name="answer3_repeat" class="form-input" placeholder="Re-enter answer" required>
+            <div class="input-with-icon" style="flex:1;">
+              <i class="fas fa-key input-icon"></i>
+              <input type="password" name="answer3" id="answer3" class="form-input" placeholder="Your answer" required>
+              <span class="password-toggle" onclick="togglePassword('answer3')">
+                <i class="fas fa-eye" id="answer3-icon"></i>
+              </span>
+            </div>
+            <div class="input-with-icon" style="flex:1;">
+              <i class="fas fa-key input-icon"></i>
+              <input type="password" name="answer3_repeat" id="answer3_repeat" class="form-input" placeholder="Re-enter answer" required>
+              <span class="password-toggle" onclick="togglePassword('answer3_repeat')">
+                <i class="fas fa-eye" id="answer3_repeat-icon"></i>
+              </span>
+            </div>
           </div>
         </div>
         <button type="submit" class="btn">Verify Answers</button>

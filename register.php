@@ -626,7 +626,13 @@ $birthdate_max = date('Y-m-d', strtotime('-18 years'));
                         <div class="col">
                             <div class="form-group">
                                 <label class="form-label">Your Answer <span class="required">*</span></label>
-                                <input type="text" name="security_answer1" class="form-input" placeholder="Enter your answer" required value="<?php echo isset($_POST['security_answer1']) ? htmlspecialchars($_POST['security_answer1']) : ''; ?>">
+                                <div class="input-with-icon">
+                                    <i class="fas fa-key input-icon"></i>
+                                    <input type="password" name="security_answer1" id="security_answer1" class="form-input" placeholder="Enter your answer" required value="<?php echo isset($_POST['security_answer1']) ? htmlspecialchars($_POST['security_answer1']) : ''; ?>">
+                                    <span class="password-toggle" onclick="togglePassword('security_answer1')">
+                                        <i class="fas fa-eye" id="security_answer1-icon"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -647,7 +653,13 @@ $birthdate_max = date('Y-m-d', strtotime('-18 years'));
                         <div class="col">
                             <div class="form-group">
                                 <label class="form-label">Your Answer <span class="required">*</span></label>
-                                <input type="text" name="security_answer2" class="form-input" placeholder="Enter your answer" required value="<?php echo isset($_POST['security_answer2']) ? htmlspecialchars($_POST['security_answer2']) : ''; ?>">
+                                <div class="input-with-icon">
+                                    <i class="fas fa-key input-icon"></i>
+                                    <input type="password" name="security_answer2" id="security_answer2" class="form-input" placeholder="Enter your answer" required value="<?php echo isset($_POST['security_answer2']) ? htmlspecialchars($_POST['security_answer2']) : ''; ?>">
+                                    <span class="password-toggle" onclick="togglePassword('security_answer2')">
+                                        <i class="fas fa-eye" id="security_answer2-icon"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -668,7 +680,13 @@ $birthdate_max = date('Y-m-d', strtotime('-18 years'));
                         <div class="col">
                             <div class="form-group">
                                 <label class="form-label">Your Answer <span class="required">*</span></label>
-                                <input type="text" name="security_answer3" class="form-input" placeholder="Enter your answer" required value="<?php echo isset($_POST['security_answer3']) ? htmlspecialchars($_POST['security_answer3']) : ''; ?>">
+                                <div class="input-with-icon">
+                                    <i class="fas fa-key input-icon"></i>
+                                    <input type="password" name="security_answer3" id="security_answer3" class="form-input" placeholder="Enter your answer" required value="<?php echo isset($_POST['security_answer3']) ? htmlspecialchars($_POST['security_answer3']) : ''; ?>">
+                                    <span class="password-toggle" onclick="togglePassword('security_answer3')">
+                                        <i class="fas fa-eye" id="security_answer3-icon"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -683,6 +701,7 @@ $birthdate_max = date('Y-m-d', strtotime('-18 years'));
                     </button>
                 </div>
             </div>
+
         </form>
 
         <div class="login-link">
