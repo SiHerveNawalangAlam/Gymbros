@@ -38,13 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   if ($step === 1) {
     // Step 1: Verify username
-    $username = $db->sanitize($_POST['username']);
+    $id_number = $db->sanitize($_POST['id_number']);
 
     $stmt = $conn->prepare("SELECT u.*, sq.question1, sq.question2, sq.question3 
                                FROM users u 
                                JOIN security_questions sq ON u.id_number = sq.user_id 
-                               WHERE u.username = ?");
-    $stmt->bind_param("s", $username);
+                               WHERE u.id_number = ?");
+    $stmt->bind_param("s", $id_number);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $_SESSION['reset_user'] = $user;
       $step = 2;
     } else {
-      $errors[] = "Username not found";
+      $errors[] = "ID number not found";
     }
   } elseif ($step === 2) {
     // Step 2: Verify security questions
@@ -172,8 +172,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if ($step === 1): ?>
       <form method="POST" action="?step=1">
         <div class="form-group">
-          <label class="form-label">Enter Your Username</label>
-          <input type="text" name="username" class="form-input" placeholder="Your username" required>
+          <label class="form-label">Enter Your ID Number</label>
+          <input type="text" name="id_number" class="form-input" placeholder="Your ID number" required>
         </div>
         <button type="submit" class="btn">Continue</button>
       </form>
@@ -181,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php elseif ($step === 2 && isset($_SESSION['reset_user'])): ?>
       <form method="POST" action="?step=2">
         <div class="form-group">
-          <label class="form-label"><?php echo htmlspecialchars($_SESSION['reset_user']['question1']); ?></label>
+          <label class="form-label"><?php echo htmlspecialchars(htmlspecialchars_decode($_SESSION['reset_user']['question1']), ENT_QUOTES, 'UTF-8'); ?></label>
           <div class="answers-row">
             <div class="input-with-icon" style="flex:1;">
               <i class="fas fa-key input-icon"></i>
@@ -200,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label"><?php echo htmlspecialchars($_SESSION['reset_user']['question2']); ?></label>
+          <label class="form-label"><?php echo htmlspecialchars(htmlspecialchars_decode($_SESSION['reset_user']['question2']), ENT_QUOTES, 'UTF-8'); ?></label>
           <div class="answers-row">
             <div class="input-with-icon" style="flex:1;">
               <i class="fas fa-key input-icon"></i>
@@ -219,7 +219,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label"><?php echo htmlspecialchars($_SESSION['reset_user']['question3']); ?></label>
+          <label class="form-label"><?php echo htmlspecialchars(htmlspecialchars_decode($_SESSION['reset_user']['question3']), ENT_QUOTES, 'UTF-8'); ?></label>
           <div class="answers-row">
             <div class="input-with-icon" style="flex:1;">
               <i class="fas fa-key input-icon"></i>
