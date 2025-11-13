@@ -30,9 +30,9 @@ $isLoggedIn = Auth::isLoggedIn();
       <p>Loading GymBros...</p>
     </div>
   </div>
-  <div class="heading">
+  <!--<div class="heading">
     <h1>Gym System</h1>
-  </div>
+  </div>-->
   <header>
     <div class="logo">
       <h1>Gym<span>Bros</span></h1>

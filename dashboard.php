@@ -63,8 +63,8 @@ $achievements = [
       <p>Loading Dashboard...</p>
     </div>
   </div>
-  <div class="heading">
-    <h1>Gym System</h1>
+  <!--<div class="heading">
+    <h1>Gym System</h1>-->
   </div>
   <header>
     <div class="logo">

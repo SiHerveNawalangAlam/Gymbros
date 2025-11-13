@@ -80,9 +80,10 @@ $csrf_token = Security::generateCSRFToken();
   <p>Loading GymBros...</p>-->
   </div>
   </div>
-  <div class="heading">
+  <!--<div class="heading">
     <h1>Gym System</h1>
-  </div>
+  </div>-->
+
   <header>
     <div class="logo">
       <h1>Gym<span>Bros</span></h1>
@@ -126,7 +127,10 @@ $csrf_token = Security::generateCSRFToken();
         <label class="form-label">Current Password</label>
         <div class="input-with-icon">
           <i class="fas fa-lock input-icon"></i>
-          <input type="password" name="current_password" class="form-input" required>
+          <input type="password" name="current_password" id="current_password" class="form-input" required>
+          <span class="password-toggle" onclick="togglePassword('current_password')">
+            <i class="fas fa-eye" id="current_password-icon"></i>
+          </span>
         </div>
       </div>
 
@@ -135,6 +139,9 @@ $csrf_token = Security::generateCSRFToken();
         <div class="input-with-icon">
           <i class="fas fa-key input-icon"></i>
           <input type="password" name="new_password" id="new_password" class="form-input" required>
+          <span class="password-toggle" onclick="togglePassword('new_password')">
+            <i class="fas fa-eye" id="new_password-icon"></i>
+          </span>
         </div>
         <div class="password-strength" id="password-strength"></div>
       </div>
@@ -143,8 +150,12 @@ $csrf_token = Security::generateCSRFToken();
         <label class="form-label">Confirm New Password</label>
         <div class="input-with-icon">
           <i class="fas fa-key input-icon"></i>
-          <input type="password" name="confirm_password" class="form-input" required>
+          <input type="password" name="confirm_password" id="confirm_password" class="form-input" required>
+          <span class="password-toggle" onclick="togglePassword('confirm_password')">
+            <i class="fas fa-eye" id="confirm_password-icon"></i>
+          </span>
         </div>
+        <div class="password-match" id="password-match" style="display:none;"></div>
       </div>
 
       <button type="submit" class="btn">
@@ -155,6 +166,9 @@ $csrf_token = Security::generateCSRFToken();
 
   <script src="js/validation.js"></script>
   <!--<script src="js/loader.js"></script>-->
+  <footer style="margin-top:40px;padding:16px 0;text-align:center;color:#9ca3af;font-family:'Montserrat',sans-serif;border-top:1px solid #2d3748;">
+    &copy; <?php echo date('Y'); ?> GymBros. All rights reserved.
+  </footer>
 </body>
 
 </html>

@@ -271,11 +271,15 @@ class AuthHelper {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Password toggle functionality
-    const passwordToggles = document.querySelectorAll('.password-toggle');
-    passwordToggles.forEach(toggle => {
-        toggle.addEventListener('click', AuthHelper.togglePassword);
-    });
+    // Password toggle functionality (login page only)
+    const isLoginPage = window.location.pathname.includes('login.php') || 
+        document.querySelector('form[id="login-form"]');
+    if (isLoginPage) {
+        const passwordToggles = document.querySelectorAll('.password-toggle');
+        passwordToggles.forEach(toggle => {
+            toggle.addEventListener('click', AuthHelper.togglePassword);
+        });
+    }
 
     // Username availability check
     const usernameInputs = document.querySelectorAll('input[name="username"]');

@@ -9,8 +9,16 @@ class Validation
       return ["$fieldName is required"];
     }
 
-    // Check for double spaces
-    if (preg_match('/\s{2,}/', $name)) {
+    // Remove double spaces and trim
+    $name = preg_replace('/\s+/', ' ', trim($name));
+
+    // Check for numbers followed by letters or letters followed by numbers
+    if (preg_match('/\d[a-zA-Z]|[a-zA-Z]\d/', $name)) {
+      $errors[] = "Numbers and letters cannot be mixed together in $fieldName";
+    }
+
+    // Check for double spaces (should not exist after cleaning)
+    if (strpos($name, '  ') !== false) {
       $errors[] = "Double spaces are not allowed in $fieldName";
     }
 
@@ -29,7 +37,7 @@ class Validation
       $errors[] = "First letter of $fieldName must be capital";
     }
 
-    // Check rest of letters should be lowercase
+    // Check rest of letters should be lowercase and proper format
     $words = explode(' ', $name);
     foreach ($words as $word) {
       if (!preg_match('/^[A-Z][a-z]*$/', $word)) {
@@ -100,6 +108,86 @@ class Validation
     if (!preg_match('/^\d{4}-\d{4}$/', $id)) {
       return ["ID must be in format xxxx-xxxx (numbers only)"];
     }
+    return [];
+  }
+
+  public static function validateEmail($email)
+  {
+    if (empty($email)) {
+      return ["Email is required"];
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      return ["Please enter a valid email address"];
+    }
+
+    return [];
+  }
+
+  public static function validateExtensionName($extension)
+  {
+    if (empty($extension)) {
+      return []; // Optional field
+    }
+
+    $errors = [];
+    $validExtensions = ['jr', 'sr', 'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'];
+    $normalized = strtolower(str_replace('.', '', trim($extension)));
+
+    if (!in_array($normalized, $validExtensions)) {
+      $errors[] = "Extension must be like Jr., Sr., I, II, III, IV, V, etc.";
+    }
+
+    return $errors;
+  }
+
+  public static function validateAddressField($value, $fieldName)
+  {
+    $errors = [];
+
+    if (empty($value)) {
+      return ["$fieldName is required"];
+    }
+
+    // Basic validation - no special characters except common address characters
+    if (preg_match('/[<>{}[\]$%^&*()+|~=`]/', $value)) {
+      $errors[] = "Special characters are not allowed in $fieldName";
+    }
+
+    return $errors;
+  }
+
+  public static function validateZipCode($zip_code)
+  {
+    if (empty($zip_code)) {
+      return ["Zip Code is required"];
+    }
+
+    if (!preg_match('/^\d+$/', $zip_code)) {
+      return ["Zip code must contain numbers only"];
+    }
+
+    if (strlen($zip_code) < 4 || strlen($zip_code) > 10) {
+      return ["Zip code must be 4-10 digits"];
+    }
+
+    return [];
+  }
+
+  public static function validateUsername($username)
+  {
+    if (empty($username)) {
+      return ["Username is required"];
+    }
+
+    if (strlen($username) < 3 || strlen($username) > 20) {
+      return ["Username must be 3-20 characters long"];
+    }
+
+    if (!preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
+      return ["Username can only contain letters, numbers, and underscores"];
+    }
+
     return [];
   }
 }

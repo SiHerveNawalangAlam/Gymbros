@@ -14,9 +14,36 @@ $loginAttempts = 0;
 $lockoutTime = 0;
 $showForgotPassword = false;
 
+// ✅ Get username from POST or from session for persistence
+$username_from_post = $_POST['username'] ?? '';
+$current_username = $username_from_post;
+
+// If no POST data, try to get the username from session (for page refresh)
+if (empty($current_username) && isset($_SESSION['last_login_attempt'])) {
+    $current_username = $_SESSION['last_login_attempt'];
+}
+
+// ✅ ALWAYS check lockout status for the current username
+if (!empty($current_username)) {
+    $consecutiveAttempts = Security::getConsecutiveFailedAttempts($current_username);
+    $loginAttempts = $consecutiveAttempts;
+
+    // NEW: Only get lockout time if we should show it (at thresholds)
+    $shouldShowLockout = Security::shouldShowLockout($current_username);
+    $lockoutTime = $shouldShowLockout ? Security::getLockoutTime($current_username) : 0;
+
+    $showForgotPassword = ($consecutiveAttempts >= 2);
+
+    // Debug info
+    error_log("User: $current_username, Consecutive: $consecutiveAttempts, Show Lockout: " . ($shouldShowLockout ? 'Yes' : 'No') . ", Lockout Time: $lockoutTime");
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && Security::verifyCSRFToken($_POST['csrf_token'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
+
+    // ✅ Store the username in session for refresh persistence
+    $_SESSION['last_login_attempt'] = $username;
 
     // Add input validation
     if (strlen($username) < 3 || strlen($username) > 20 || !preg_match('/^[a-zA-Z0-9]+$/', $username)) {
@@ -27,8 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Security::verifyCSRFToken($_POST['c
         $errors[] = "Password must be 8-128 characters long";
     }
 
-    // Check if user is locked out (regardless of validation errors).
-    // Use getLockoutTime once to retrieve the remaining seconds.
+    // Check if user is locked out
     $lockoutTime = Security::getLockoutTime($username);
     if ($lockoutTime > 0) {
         $errors[] = "Too many failed attempts. Please try again in {$lockoutTime} seconds.";
@@ -49,6 +75,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Security::verifyCSRFToken($_POST['c
             $_SESSION['user'] = $user;
             $_SESSION['login_time'] = time();
 
+            // ✅ Clear the stored username on successful login
+            unset($_SESSION['last_login_attempt']);
+
             // Log successful attempt
             $stmt = $conn->prepare("INSERT INTO login_attempts (username, ip_address, success) VALUES (?, ?, 1)");
             $stmt->bind_param("ss", $username, $ip_address);
@@ -64,20 +93,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Security::verifyCSRFToken($_POST['c
             $stmt->bind_param("ss", $username, $ip_address);
             $stmt->execute();
 
-            // Check total failed attempts for forgot password display
-            $stmt = $conn->prepare("SELECT COUNT(*) as attempts FROM login_attempts 
-                                   WHERE username = ? AND attempt_time > DATE_SUB(NOW(), INTERVAL 30 MINUTE) 
-                                   AND success = 0");
-            $stmt->bind_param("s", $username);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
+            // Get updated consecutive attempts
+            $consecutiveAttempts = Security::getConsecutiveFailedAttempts($username);
+            $loginAttempts = $consecutiveAttempts;
 
-            $loginAttempts = $row['attempts'];
-            $showForgotPassword = ($loginAttempts >= 2);
+            // NEW: Only show lockout if at threshold
+            $shouldShowLockout = Security::shouldShowLockout($username);
+            $lockoutTime = $shouldShowLockout ? Security::getLockoutTime($username) : 0;
 
-            // Get current lockout time after this failed attempt
-            $lockoutTime = Security::getLockoutTime($username);
+            $showForgotPassword = ($consecutiveAttempts >= 2);
+
+            error_log("Login failed. Consecutive: $consecutiveAttempts, Show Lockout: " . ($shouldShowLockout ? 'Yes' : 'No'));
         }
     }
 }
@@ -99,9 +125,6 @@ $csrf_token = Security::generateCSRFToken();
 </head>
 
 <body>
-    <div class="heading">
-        <h1>Gym System</h1>
-    </div>
     <header>
         <div class="logo">
             <h1>Gym<span>Bros</span></h1>
@@ -109,8 +132,7 @@ $csrf_token = Security::generateCSRFToken();
         <div class="navBar">
             <ul>
                 <li><a href="index.php"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="register.php"><i class="fas fa-user-plus"></i> Register</a></li>
-                <li><a href="login.php" class="active"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li><a href="register.php"><i class="fas fa-user-plus"></i> Registered</a></li>
             </ul>
         </div>
     </header>
@@ -149,8 +171,8 @@ $csrf_token = Security::generateCSRFToken();
                 <label class="form-label">Username</label>
                 <div class="input-with-icon">
                     <i class="fas fa-user input-icon"></i>
-                    <input type="text" name="username" class="form-input" placeholder="Enter your username" required
-                        <?php echo $lockoutTime > 0 ? 'readonly' : ''; ?>
+                    <input type="text" name="username" id="username" class="form-input"
+                        placeholder="Enter your username" required <?php echo $lockoutTime > 0 ? 'readonly' : ''; ?>
                         value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
                 </div>
             </div>
@@ -175,8 +197,9 @@ $csrf_token = Security::generateCSRFToken();
 
             <?php if ($showForgotPassword): ?>
                 <div class="forgot-password">
-                    <a href="forgot-password.php">
-                        <i class="fas fa-question-circle"></i> Forgot Password? Reset Here
+                    <span>Forgot Password?</span>
+                    <a href="forgot-password.php" id="forgot-password-link">
+                        <i class="fas fa-question-circle"></i> Reset Here
                     </a>
                 </div>
             <?php endif; ?>
@@ -189,6 +212,9 @@ $csrf_token = Security::generateCSRFToken();
 
     <script src="js/auth.js"></script>
     <script src="js/timer.js"></script>
+    <footer style="margin-top:40px;padding:16px 0;text-align:center;color:#9ca3af;font-family:'Montserrat',sans-serif;border-top:1px solid #2d3748;">
+        &copy; <?php echo date('Y'); ?> GymBros. All rights reserved.
+    </footer>
 </body>
 
 </html>

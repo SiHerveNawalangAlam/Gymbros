@@ -1,0 +1,25 @@
+# Disable directory listing
+Options -Indexes
+
+# Enable rewrite engine
+RewriteEngine On
+
+# Security: never serve these files
+<FilesMatch "\.(env|sql|log|ini|sh|bat|cmd|ps1|yml|yaml)$">
+  Require all denied
+</FilesMatch>
+
+# Block access to VCS and config files
+<FilesMatch "^(\.git|\.htaccess|\.htpasswd|composer\.(json|lock))$">
+  Require all denied
+</FilesMatch>
+
+# Only allow POST to AJAX endpoints; block direct GET
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} ^/(check_username\.php|check_id\.php)$ [NC]
+RewriteCond %{REQUEST_METHOD} !POST
+RewriteRule ^ - [R=404,L]
+
+# Optional: force HTTPS if you use SSL (uncomment when ready)
+#RewriteCond %{HTTPS} !=on
+#RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

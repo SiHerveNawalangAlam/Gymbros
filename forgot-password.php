@@ -58,17 +58,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   } elseif ($step === 2) {
     // Step 2: Verify security questions
     if (isset($_SESSION['reset_user'])) {
-      $answers = [
-        $db->sanitize($_POST['answer1']),
-        $db->sanitize($_POST['answer2']),
-        $db->sanitize($_POST['answer3'])
-      ];
+      $a1 = $db->sanitize($_POST['answer1']);
+      $a1r = $db->sanitize($_POST['answer1_repeat']);
+      $a2 = $db->sanitize($_POST['answer2']);
+      $a2r = $db->sanitize($_POST['answer2_repeat']);
+      $a3 = $db->sanitize($_POST['answer3']);
+      $a3r = $db->sanitize($_POST['answer3_repeat']);
 
-      if (verifySecurityAnswers($_SESSION['reset_user']['id_number'], $answers)) {
+      if ($a1 !== $a1r) {
+        $errors[] = "Answer 1 does not match";
+      }
+      if ($a2 !== $a2r) {
+        $errors[] = "Answer 2 does not match";
+      }
+      if ($a3 !== $a3r) {
+        $errors[] = "Answer 3 does not match";
+      }
+
+      $answers = [$a1, $a2, $a3];
+
+      if (empty($errors) && verifySecurityAnswers($_SESSION['reset_user']['id_number'], $answers)) {
         $_SESSION['reset_verified'] = true;
         $step = 3;
       } else {
-        $errors[] = "One or more answers are incorrect";
+        if (empty($errors)) {
+          $errors[] = "One or more answers are incorrect";
+        }
       }
     }
   } elseif ($step === 3) {
@@ -122,9 +137,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-  <div class="heading">
+
+  <!--<div class="heading">
     <h1>Gym System</h1>
-  </div>
+  </div>-->
   <header>
     <div class="logo">
       <h1>Gym<span>Bros</span></h1>
@@ -166,15 +182,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <form method="POST" action="?step=2">
         <div class="form-group">
           <label class="form-label"><?php echo htmlspecialchars($_SESSION['reset_user']['question1']); ?></label>
-          <input type="text" name="answer1" class="form-input" placeholder="Your answer" required>
+          <div class="answers-row">
+            <input type="text" name="answer1" class="form-input" placeholder="Your answer" required>
+            <input type="text" name="answer1_repeat" class="form-input" placeholder="Re-enter answer" required>
+          </div>
         </div>
         <div class="form-group">
           <label class="form-label"><?php echo htmlspecialchars($_SESSION['reset_user']['question2']); ?></label>
-          <input type="text" name="answer2" class="form-input" placeholder="Your answer" required>
+          <div class="answers-row">
+            <input type="text" name="answer2" class="form-input" placeholder="Your answer" required>
+            <input type="text" name="answer2_repeat" class="form-input" placeholder="Re-enter answer" required>
+          </div>
         </div>
         <div class="form-group">
           <label class="form-label"><?php echo htmlspecialchars($_SESSION['reset_user']['question3']); ?></label>
-          <input type="text" name="answer3" class="form-input" placeholder="Your answer" required>
+          <div class="answers-row">
+            <input type="text" name="answer3" class="form-input" placeholder="Your answer" required>
+            <input type="text" name="answer3_repeat" class="form-input" placeholder="Re-enter answer" required>
+          </div>
         </div>
         <button type="submit" class="btn">Verify Answers</button>
       </form>
@@ -183,11 +208,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <form method="POST" action="?step=3">
         <div class="form-group">
           <label class="form-label">New Password</label>
-          <input type="password" name="new_password" class="form-input" placeholder="Enter new password" required>
+          <div class="input-with-icon">
+            <i class="fas fa-key input-icon"></i>
+            <input type="password" name="new_password" id="new_password" class="form-input" placeholder="Enter new password" required>
+            <span class="password-toggle" onclick="togglePassword('new_password')">
+              <i class="fas fa-eye" id="new_password-icon"></i>
+            </span>
+          </div>
+          <div class="password-strength" id="password-strength"></div>
         </div>
         <div class="form-group">
           <label class="form-label">Confirm New Password</label>
-          <input type="password" name="confirm_password" class="form-input" placeholder="Confirm new password" required>
+          <div class="input-with-icon">
+            <i class="fas fa-key input-icon"></i>
+            <input type="password" name="confirm_password" id="confirm_password" class="form-input" placeholder="Confirm new password" required>
+            <span class="password-toggle" onclick="togglePassword('confirm_password')">
+              <i class="fas fa-eye" id="confirm_password-icon"></i>
+            </span>
+          </div>
+          <div class="password-match" id="password-match" style="display:none;"></div>
         </div>
         <button type="submit" class="btn">Reset Password</button>
       </form>
@@ -197,6 +236,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <p>Remember your password? <a href="login.php" style="color: #ff5e00;">Login here</a></p>
     </div>
   </div>
+  <script src="js/validation.js"></script>
+  <footer style="margin-top:40px;padding:16px 0;text-align:center;color:#9ca3af;font-family:'Montserrat',sans-serif;border-top:1px solid #2d3748;">
+    &copy; <?php echo date('Y'); ?> GymBros. All rights reserved.
+  </footer>
 </body>
 
 </html>
