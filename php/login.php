@@ -1,7 +1,7 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/security.php';
-require_once 'includes/auth.php';
+require_once '../includes/config.php';
+require_once '../includes/security.php';
+require_once '../includes/auth.php';
 
 // Redirect if already logged in
 if (Auth::isLoggedIn()) {
@@ -14,7 +14,7 @@ $loginAttempts = 0;
 $lockoutTime = 0;
 $showForgotPassword = false;
 
-// ✅ Get username from POST or from session for persistence
+// Get username from POST or from session for persistence
 $username_from_post = $_POST['username'] ?? '';
 $current_username = $username_from_post;
 
@@ -23,7 +23,7 @@ if (empty($current_username) && isset($_SESSION['last_login_attempt'])) {
     $current_username = $_SESSION['last_login_attempt'];
 }
 
-// ✅ ALWAYS check lockout status for the current username
+// ALWAYS check lockout status for the current username
 if (!empty($current_username)) {
     $consecutiveAttempts = Security::getConsecutiveFailedAttempts($current_username);
     $loginAttempts = $consecutiveAttempts;
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Security::verifyCSRFToken($_POST['c
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // ✅ Store the username in session for refresh persistence
+    // Store the username in session for refresh persistence
     $_SESSION['last_login_attempt'] = $username;
 
     // Add input validation
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Security::verifyCSRFToken($_POST['c
             $_SESSION['user'] = $user;
             $_SESSION['login_time'] = time();
 
-            // ✅ Clear the stored username on successful login
+            // Clear the stored username on successful login
             unset($_SESSION['last_login_attempt']);
 
             // Log successful attempt
@@ -121,7 +121,7 @@ $csrf_token = Security::generateCSRFToken();
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Oswald:wght@500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="../css/auth.css">
 </head>
 
 <body>
@@ -210,8 +210,8 @@ $csrf_token = Security::generateCSRFToken();
         </form>
     </div>
 
-    <script src="js/auth.js"></script>
-    <script src="js/timer.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/timer.js"></script>
     <footer style="margin-top:40px;padding:16px 0;text-align:center;color:#9ca3af;font-family:'Montserrat',sans-serif;border-top:1px solid #2d3748;">
         &copy; <?php echo date('Y'); ?> GymBros. All rights reserved.
     </footer>

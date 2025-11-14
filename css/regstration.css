@@ -763,9 +763,40 @@ body {
   pointer-events: none; /* Do not block clicks below */
 }
 
+/* Multi-error list rendering */
+.field-error .field-error-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.field-error .field-error-list li {
+  margin: 2px 0;
+  padding-left: 0;
+}
+
 /* Ensure form groups have consistent height */
 .form-group {
   position: relative;
   margin-bottom: 8px; /* Consistent spacing */
   min-height: 50px; /* Enough space for input + error */
+}
+
+/* When a field has an error, reserve extra space so the absolute-positioned
+   error bubble doesn't overlap the next label/field */
+.form-group.has-error {
+  padding-bottom: 26px; /* more space for single error bubble */
+  margin-bottom: 18px;  /* extra gap before next field */
+  min-height: 70px;     /* ensure container is tall enough */
+}
+
+/* If there are multiple errors, use static flow to avoid overlapping next label */
+.field-error.multiple {
+  position: static;
+  margin-top: 6px;
+}
+
+/* Ensure labels don't overlap with absolute elements */
+.form-group .form-label {
+  position: relative;
+  z-index: 2;
 }

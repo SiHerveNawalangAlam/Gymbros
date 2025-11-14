@@ -142,16 +142,19 @@ class MultiStepForm {
           }
         });
 
-        // Auto-clean names in real-time (text inputs only; exclude extension_name)
+        // Name fields: remove any pre-attached listeners (e.g., from validation.js) and attach minimal handler
         if (
           input.tagName === "INPUT" &&
           input.type === "text" &&
-          input.name.includes("name") &&
-          input.name !== "extension_name" &&
-          !input.name.includes("security_answer")
+          input.name && ["first_name","middle_name","last_name"].includes(input.name)
         ) {
-          input.addEventListener("input", (e) => {
-            this.cleanNameField(input);
+          const cloned = input.cloneNode(true);
+          input.parentNode.replaceChild(cloned, input);
+          cloned.addEventListener("input", () => {
+            // Minimal cleaning: only trim leading spaces; keep internal spaces for double-space validation
+            this.cleanNameField(cloned);
+            // Validate immediately to show specific error sequence
+            this.validateSingleField(cloned);
           });
         }
 
@@ -285,18 +288,10 @@ class MultiStepForm {
   }
 
   cleanNameField(input) {
+    // Do not block characters or auto-capitalize here.
+    // Only trim leading spaces; keep internal multiple spaces for validation.
     let value = input.value;
-    value = value.replace(/[^a-zA-Z\s]/g, "");
-    value = value.replace(/\s+/g, " ");
-
-    if (value.length === 1) {
-      value = value.toUpperCase();
-    } else if (value.length > 1) {
-      value = value.replace(/\w\S*/g, function (txt) {
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-      });
-    }
-
+    value = value.replace(/^\s+/, '');
     input.value = value;
   }
 
@@ -427,7 +422,7 @@ class MultiStepForm {
         if (!firstInvalidField) {
           firstInvalidField = input;
         }
-        this.showFieldError(input, fieldValidation.errors[0]);
+        this.showFieldError(input, fieldValidation.errors);
       } else {
         this.clearFieldError(input);
         this.showFieldSuccess(input);
@@ -465,7 +460,7 @@ class MultiStepForm {
 
     const fieldValidation = this.validateField(input);
     if (!fieldValidation.isValid) {
-      this.showFieldError(input, fieldValidation.errors[0]);
+      this.showFieldError(input, fieldValidation.errors);
     } else {
       this.clearFieldError(input);
       this.showFieldSuccess(input);
@@ -474,7 +469,8 @@ class MultiStepForm {
   }
 
   validateField(input) {
-    const value = input.value.trim();
+    const raw = input.value;
+    const value = raw.trim();
     const fieldName = this.getFieldDisplayName(input.name);
     const errors = [];
 
@@ -490,7 +486,42 @@ class MultiStepForm {
     // Birthdate handled separately in validateCurrentStep/calculateAge
 
     const tripleRepeat = /([a-z])\1\1/i;
-    if (["first_name", "middle_name", "last_name", "username"].includes(input.name)) {
+    if (["first_name", "middle_name", "last_name"].includes(input.name)) {
+      // Ordered, specific validations for names
+      const hasDigit = /\d/.test(value);
+      const hasLetter = /[A-Za-z]/.test(value);
+      const hasSpecial = /[^A-Za-z0-9\s]/.test(value);
+
+      // 1) Special characters only
+      if (hasSpecial) {
+        errors.push('Special characters are not allowed');
+      }
+      // 2) Mixed numbers and letters
+      if (hasDigit && hasLetter) {
+        errors.push('Numbers and letters cannot be mixed together');
+      }
+      // 3) Numbers present (and not mixed already covered)
+      if (hasDigit && !hasLetter) {
+        errors.push('Numbers are not allowed');
+      }
+      // 4) Double spaces (use raw value to detect spacing inside)
+      if (/\s{2,}/.test(raw)) {
+        errors.push('Double spaces are not allowed');
+      }
+      // 5) Three consecutive identical letters
+      if (tripleRepeat.test(value)) {
+        errors.push('Three consecutive identical letters are not allowed');
+      }
+      // 6) All caps not allowed (but allow a single initial uppercase letter)
+      if (/^[A-Z\s]+$/.test(value) && /[A-Z].*[A-Z]/.test(value)) {
+        errors.push('All capital letters are not allowed');
+      }
+      // 7) Capitalization rule: require first letter uppercase
+      if (!/^[A-Z]/.test(value)) {
+        errors.push('First letter must be capital');
+      }
+    }
+    if (input.name === 'username') {
       if (tripleRepeat.test(value)) {
         errors.push(`${fieldName}: no three consecutive identical letters`);
       }
@@ -512,6 +543,7 @@ class MultiStepForm {
       }
     }
 
+    // Return all collected errors so multiple issues can be shown at once
     return {
       isValid: errors.length === 0,
       errors: errors,
@@ -661,7 +693,7 @@ class MultiStepForm {
     return names[fieldName] || fieldName.replace(/_/g, " ");
   }
 
-  showFieldError(input, message) {
+  showFieldError(input, messages) {
     // Do not show field-error under the Birthdate input; Age section handles it
     if (input && input.name === 'birthdate') {
       return;
@@ -671,23 +703,63 @@ class MultiStepForm {
 
     // Scope to closest .form-group to avoid stacking multiple messages
     const group = input.closest('.form-group') || input.parentNode;
-    // Remove ALL existing error nodes within this group to prevent duplicates
-    const existing = group.querySelectorAll('.field-error');
-    existing.forEach((el) => el.remove());
-
-    // Create a single error node under the input wrapper
-    let errorDiv = document.createElement('div');
-    errorDiv.className = 'field-error';
-    const wrapper = input.parentNode && input.parentNode.classList && input.parentNode.classList.contains('input-with-icon')
-      ? input.parentNode
-      : group;
-    wrapper.appendChild(errorDiv);
+    if (group && group.classList) {
+      group.classList.add('has-error');
+    }
+    // Ensure we have a single error container per group
+    let errorDiv = group.querySelector('.field-error');
+    if (!errorDiv) {
+      errorDiv = document.createElement('div');
+      errorDiv.className = 'field-error';
+      const wrapper = input.parentNode && input.parentNode.classList && input.parentNode.classList.contains('input-with-icon')
+        ? input.parentNode
+        : group;
+      wrapper.appendChild(errorDiv);
+    }
 
     // Hide any feedback within this group to avoid double overlays (e.g., username availability)
     const feedbackEls = group.querySelectorAll('.feedback, #username-feedback');
     feedbackEls.forEach(el => { el.innerHTML = ''; el.style.display = 'none'; });
 
-    errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    // Normalize messages to an array, de-duplicate, and sort by fixed priority
+    const list = Array.isArray(messages) ? messages : [messages];
+    const unique = Array.from(new Set(list.filter(Boolean)));
+    const priority = [
+      'Special characters are not allowed',
+      'Numbers and letters cannot be mixed together',
+      'Numbers are not allowed',
+      'Double spaces are not allowed',
+      'Three consecutive identical letters are not allowed',
+      'All capital letters are not allowed',
+      'First letter must be capital'
+    ];
+    const idx = (m) => {
+      const i = priority.indexOf(m);
+      return i === -1 ? Number.MAX_SAFE_INTEGER : i;
+    };
+    unique.sort((a,b) => idx(a) - idx(b));
+    if (unique.length <= 1) {
+      if (errorDiv.classList) errorDiv.classList.remove('multiple');
+      // Ensure the error bubble is positioned under the input wrapper for single errors
+      const wrapper = input.parentNode && input.parentNode.classList && input.parentNode.classList.contains('input-with-icon')
+        ? input.parentNode
+        : group;
+      if (errorDiv.parentNode !== wrapper) {
+        errorDiv.parentNode && errorDiv.parentNode.removeChild(errorDiv);
+        wrapper.appendChild(errorDiv);
+      }
+      const msg = unique[0] || 'Invalid input';
+      errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${msg}`;
+    } else {
+      // Ensure error container lives under the .form-group (not inside input-with-icon)
+      if (errorDiv.parentNode && errorDiv.parentNode !== group) {
+        errorDiv.parentNode.removeChild(errorDiv);
+        group.appendChild(errorDiv);
+      }
+      if (errorDiv.classList) errorDiv.classList.add('multiple');
+      const items = unique.map(m => `<li>${m}</li>`).join('');
+      errorDiv.innerHTML = `<ul class="field-error-list">${items}</ul>`;
+    }
     errorDiv.style.display = "block";
 
     input.style.borderColor = "#dc3545";
@@ -705,6 +777,9 @@ class MultiStepForm {
       errs.forEach((el, idx) => { if (idx > 0) el.remove(); else el.style.display = 'none'; });
       const fbs = group.querySelectorAll('.feedback, #username-feedback');
       fbs.forEach(el => { el.innerHTML = ''; el.style.display = 'none'; });
+      if (group.classList) {
+        group.classList.remove('has-error');
+      }
     }
 
     input.style.borderColor = "#28a745";
@@ -723,6 +798,9 @@ class MultiStepForm {
       errs.forEach((el, idx) => { if (idx > 0) el.remove(); else el.style.display = 'none'; });
       const fbs = group.querySelectorAll('.feedback, #username-feedback');
       fbs.forEach(el => { el.innerHTML = ''; el.style.display = 'none'; });
+      if (group.classList) {
+        group.classList.remove('has-error');
+      }
     }
   }
 

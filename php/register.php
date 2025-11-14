@@ -1,8 +1,8 @@
 <?php
 
-require_once 'includes/config.php';
-require_once 'includes/security.php';
-require_once 'includes/validation.php';
+require_once '../includes/config.php';
+require_once '../includes/security.php';
+require_once '../includes/validation.php';
 
 $errors = [];
 $success = false;
@@ -270,7 +270,7 @@ $birthdate_max = date('Y-m-d', strtotime('-18 years'));
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Oswald:wght@500;600;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/regstration.css">
+    <link rel="stylesheet" href="../css/regstration.css">
 </head>
 
 <body>
@@ -349,7 +349,7 @@ $birthdate_max = date('Y-m-d', strtotime('-18 years'));
                                 <div class="input-with-icon">
                                     <i class="fas fa-signature input-icon"></i>
                                     <input type="text" name="first_name" class="form-input"
-                                        placeholder="Enter first name" required
+                                        placeholder="Enter first name" required autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"
                                         onblur="validateName(this, 'First Name')"
                                         value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : ''; ?>">
                                 </div>
@@ -361,7 +361,7 @@ $birthdate_max = date('Y-m-d', strtotime('-18 years'));
                                 <div class="input-with-icon">
                                     <i class="fas fa-signature input-icon"></i>
                                     <input type="text" name="middle_name" class="form-input"
-                                        placeholder="Enter middle name" onblur="validateName(this, 'Middle Name')"
+                                        placeholder="Enter middle name" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onblur="validateName(this, 'Middle Name')"
                                         value="<?php echo isset($_POST['middle_name']) ? htmlspecialchars($_POST['middle_name']) : ''; ?>">
                                 </div>
                             </div>
@@ -375,7 +375,7 @@ $birthdate_max = date('Y-m-d', strtotime('-18 years'));
                                 <div class="input-with-icon">
                                     <i class="fas fa-signature input-icon"></i>
                                     <input type="text" name="last_name" class="form-input" placeholder="Enter last name"
-                                        required onblur="validateName(this, 'Last Name')"
+                                        required autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onblur="validateName(this, 'Last Name')"
                                         value="<?php echo isset($_POST['last_name']) ? htmlspecialchars($_POST['last_name']) : ''; ?>">
                                 </div>
                             </div>
@@ -709,9 +709,9 @@ $birthdate_max = date('Y-m-d', strtotime('-18 years'));
         </div>
     </div>
 
-    <script src="js/auth.js"></script>
-    <script src="js/validation.js"></script>
-    <script src="js/multi_step.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/validation.js"></script>
+    <script src="../js/multi_step.js"></script>
     <footer style="margin-top:40px;padding:16px 0;text-align:center;color:#9ca3af;font-family:'Montserrat',sans-serif;border-top:1px solid #2d3748;">
         &copy; <?php echo date('Y'); ?> GymBros. All rights reserved.
     </footer>

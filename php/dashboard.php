@@ -1,6 +1,6 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/auth.php';
+require_once '../includes/config.php';
+require_once '../includes/auth.php';
 
 // Redirect to login if not logged in
 if (!Auth::isLoggedIn()) {
@@ -48,7 +48,7 @@ $achievements = [
   <link
     href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Oswald:wght@500;600;700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
@@ -396,7 +396,7 @@ $achievements = [
     </div>
   </footer>
 
-  <script src="js/loader.js"></script>
+  <script src="../js/loader.js"></script>
 </body>
 
 </html>

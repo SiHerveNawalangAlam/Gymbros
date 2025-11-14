@@ -1,6 +1,6 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/auth.php';
+require_once '../includes/config.php';
+require_once '../includes/auth.php';
 
 $isLoggedIn = Auth::isLoggedIn();
 ?>
@@ -15,7 +15,7 @@ $isLoggedIn = Auth::isLoggedIn();
   <link
     href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
@@ -317,11 +317,11 @@ $isLoggedIn = Auth::isLoggedIn();
     </div>
 
     <div class="footer-bottom">
-      <p class="copyright">© 2023 GymBros. All rights reserved.</p>
+      <p class="copyright"> 2023 GymBros. All rights reserved.</p>
     </div>
   </footer>
 
-  <script src="js/loader.js">
+  <script src="../js/loader.js">
   </script>
 </body>
 

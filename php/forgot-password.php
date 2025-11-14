@@ -1,6 +1,6 @@
 <?php
-require_once 'includes/config.php';
-require_once 'includes/security.php';
+require_once '../includes/config.php';
+require_once '../includes/security.php';
 
 // Simple Auth function since class is missing
 function verifySecurityAnswers($user_id, $answers)
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <link
     href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Oswald:wght@500;600;700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="css/forgot-password.css">
+  <link rel="stylesheet" href="../css/forgot-password.css">
 </head>
 
 <body>
@@ -272,7 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <p>Remember your password? <a href="login.php" style="color: #ff5e00;">Login here</a></p>
     </div>
   </div>
-  <script src="js/validation.js"></script>
+  <script src="../js/validation.js"></script>
   <footer style="margin-top:40px;padding:16px 0;text-align:center;color:#9ca3af;font-family:'Montserrat',sans-serif;border-top:1px solid #2d3748;">
     &copy; <?php echo date('Y'); ?> GymBros. All rights reserved.
   </footer>

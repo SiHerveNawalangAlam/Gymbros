@@ -1,7 +1,7 @@
 <?php
 // check_id.php
-require_once 'includes/config.php';
-require_once 'includes/security.php';
+require_once '../includes/config.php';
+require_once '../includes/security.php';
 
 header('Content-Type: application/json');
 
